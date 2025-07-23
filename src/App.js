@@ -2,14 +2,17 @@
 import { useEffect, useState } from "react"
 import EarthquakeMap from "./components/earthquake-map.js"
 import DataSummary from "./components/data-summary.js"
-import {TohokuTableauIframe, NankaiTableauIframe} from "./components/tableauIframe.js"
+import { TohokuTableauIframe, NankaiTableauIframe } from "./components/tableauIframe.js"
 import { tohokuData, nankaiData } from "./data/earthquake-data.js"
 import "./App.css"
 
-
+// Render 배포 시 자동으로 현재 도메인 사용
+const API_BASE_URL =
+  process.env.NODE_ENV === "production"
+    ? window.location.origin // 같은 서버에서 API와 React 모두 서빙
+    : "http://localhost:5050" // 로컬 개발 시 기존 포트 유지
 
 function App() {
-
   const [selectedEarthquake, setSelectedEarthquake] = useState(null)
   const [currentTohokuData, setCurrentTohokuData] = useState(tohokuData)
   const [currentNankaiData, setCurrentNankaiData] = useState(nankaiData)
@@ -21,7 +24,6 @@ function App() {
     tohoku: "2011-02-11 ~ 2011-03-12",
   })
 
-
   // ✅ 앱 시작 시 localStorage에 저장된 값으로 초기화
   useEffect(() => {
     const savedTime = localStorage.getItem("lastUpdated")
@@ -29,7 +31,6 @@ function App() {
       setLastUpdated(savedTime)
     }
   }, [])
-
 
   const handleEarthquakeSelect = (earthquake) => {
     setSelectedEarthquake(earthquake)
@@ -39,23 +40,21 @@ function App() {
     setSelectedEarthquake(null)
   }
 
-
-   // 실제 API를 호출하는 데이터 새로고침 함수
+  // 실제 API를 호출하는 데이터 새로고침 함수
   const refreshData = async () => {
-
     setIsLoading(true)
     setUpdateStatus("난카이 지진 데이터를 업데이트하는 중...")
 
     try {
       console.log("🔄 API 서버에 데이터 업데이트 요청...")
-      // Python API 서버에 데이터 업데이트 요청
-      const response = await fetch("http://localhost:5050/api/refresh-nankai")
+
+      // API URL을 환경에 따라 동적으로 설정
+      const response = await fetch(`${API_BASE_URL}/api/refresh-nankai`)
       const result = await response.json()
 
       if (result.success) {
         // API에서 받은 최신 데이터로 상태 업데이트
         setCurrentNankaiData(result.data)
-
         const formattedTime = new Date(result.updated_at).toLocaleString()
         setLastUpdated(formattedTime)
         localStorage.setItem("lastUpdated", formattedTime) // ✅ 저장
@@ -71,16 +70,13 @@ function App() {
 
         // 3초 후 상태 메시지 제거
         setTimeout(() => setUpdateStatus(""), 3000)
-
-        // 페이지 새로고침으로 JS 파일 변경사항 반영 (선택사항)
-        // window.location.reload()
       } else {
         setUpdateStatus(`❌ ${result.message}`)
         setTimeout(() => setUpdateStatus(""), 5000)
       }
     } catch (error) {
       console.error("❌ API 호출 중 오류 발생:", error)
-      setUpdateStatus("❌ 서버 연결 오류. Python API 서버가 실행 중인지 확인해주세요.")
+      setUpdateStatus("❌ 서버 연결 오류. 잠시 후 다시 시도해주세요.")
       setTimeout(() => setUpdateStatus(""), 5000)
     } finally {
       setIsLoading(false)
@@ -96,42 +92,47 @@ function App() {
             <h1 className="main-title">일본 지진 데이터 비교 분석</h1>
             <p className="subtitle">동일본 대지진(2011) vs 난카이 대지진 관련 지진(2024~2025)</p>
 
-          {/* 헤더 이미지 섹션 */}
-          <div className="header-image-section">
-            <div className="header-images">
-              {/* 일본 지도 이미지 */}
-              <div className="header-image-item">
-                <img
-                  src="/news_wideshow_serious.png"
-                  alt="일본 지진 위험 지역 지도"
-                  className="header-image"
-                />
+            {/* 헤더 이미지 섹션 */}
+            <div className="header-image-section">
+              <div className="header-images">
+                {/* 일본 지도 이미지 */}
+                <div className="header-image-item">
+                  <img src="/news_wideshow_serious.png" alt="일본 지진 위험 지역 지도" className="header-image" />
+                </div>
               </div>
-            </div>
 
-            {/* 데이터 업데이트 섹션 */}
-            <div className="update-section">
-              <div className="update-info">
-                <span className="last-updated">마지막 업데이트: {lastUpdated}</span>
-                <button onClick={refreshData} disabled={isLoading} className="refresh-button">
-                  {isLoading ? (
-                    <>
-                      <span className="loading-spinner">⟳</span>
-                      업데이트 중...
-                    </>
-                  ) : (
-                    <>🔄 데이터 새로고침</>
-                  )}
-                </button>
+              {/* 데이터 업데이트 섹션 */}
+              <div className="update-section">
+                <div className="update-info">
+                  <span className="last-updated">마지막 업데이트: {lastUpdated}</span>
+                  <button onClick={refreshData} disabled={isLoading} className="refresh-button">
+                    {isLoading ? (
+                      <>
+                        <span className="loading-spinner">⟳</span>
+                        업데이트 중...
+                      </>
+                    ) : (
+                      <>🚀 데이터 새로고침</>
+                    )}
+                  </button>
+                </div>
+
+                {/* 업데이트 상태 메시지 */}
+                {updateStatus && (
+                  <div className={`update-status ${updateStatus.includes("❌") ? "error" : "success"}`}>
+                    {updateStatus}
+                  </div>
+                )}
               </div>
             </div>
-          </div>
 
             {/* 이미지 설명 텍스트 */}
             <div className="image-description">
               <p>
-                일본 미야자키 앞바다 규모 7.1 지진 이후, 난카이 해곡에서 규모 8 이상 대지진, 즉 난카이 지진의 가능성이 제기되고 있습니다.<br></br>
-                이 해역은 100~150년 주기로 대지진이 발생해 왔으며, 실제 일어난다면 <storng>2011년 동일본 대지진</storng>보다 16배 큰 인명 피해가 예상됩니다.
+                일본 미야자키 앞바다 규모 7.1 지진 이후, 난카이 해곡에서 규모 8 이상 대지진, 즉 난카이 지진의 가능성이
+                제기되고 있습니다.
+                <br />이 해역은 100~150년 주기로 대지진이 발생해 왔으며, 실제 일어난다면{" "}
+                <strong>2011년 동일본 대지진</strong>보다 16배 큰 인명 피해가 예상됩니다.
               </p>
             </div>
           </div>
@@ -191,6 +192,7 @@ function App() {
               </p>
               <p className="card-label">최대 규모</p>
             </div>
+
             {/* 난카이 관련 최대 규모 */}
             <div className="comparison-card nankai-card">
               <h4 className="card-title">난카이 관련</h4>
@@ -199,6 +201,7 @@ function App() {
               </p>
               <p className="card-label">최대 규모</p>
             </div>
+
             {/* 데이터 기간 정보 */}
             <div className="comparison-card period-card">
               <h4 className="card-title">데이터 기간</h4>
@@ -206,12 +209,13 @@ function App() {
               <p className="card-text">난카이 지진 : 2024년 5월 ~ 마지막 업데이트 날짜</p>
             </div>
           </div>
-            <div style={{ display: "flex", gap: "20px", justifyContent: "space-between", margin: "40px 0" }}>
-              <TohokuTableauIframe />
-              <NankaiTableauIframe />
-            </div>
+
+          {/* Tableau 차트들 */}
+          <div style={{ display: "flex", gap: "20px", justifyContent: "space-between", margin: "40px 0" }}>
+            <TohokuTableauIframe />
+            <NankaiTableauIframe />
+          </div>
         </div>
-        
       </main>
 
       {/* 지진 정보 팝업 (지진을 클릭했을 때만 나타남) */}
@@ -232,43 +236,40 @@ function App() {
                 <span className="info-label">발생 시각:</span>
                 <p className="info-value">{selectedEarthquake.time}</p>
               </div>
+
               <div className="info-item">
                 <span className="info-label">위치:</span>
                 <p className="info-value">{selectedEarthquake.place}</p>
               </div>
+
               <div className="info-item">
                 <span className="info-label">규모:</span>
                 <p className="info-value magnitude">M{selectedEarthquake.mag}</p>
               </div>
+
               <div className="info-item">
                 <span className="info-label">깊이:</span>
                 <p className="info-value">{selectedEarthquake.dep}km</p>
               </div>
+
               <div className="info-item">
                 <span className="info-label">진원 좌표:</span>
                 <p className="info-value">
-                  {selectedEarthquake.lat}°N,{" "}
-                  {selectedEarthquake.lng}°E
+                  {selectedEarthquake.lat}°N, {selectedEarthquake.lng}°E
                 </p>
               </div>
+
               {/* 국내 영향 정보 (난카이 데이터에만 있음) */}
-              {(selectedEarthquake.effect) && (
+              {selectedEarthquake.effect && (
                 <div className="info-item">
                   <span className="info-label">국내 영향:</span>
-                  <p className="info-value">
-                    {selectedEarthquake.effect === "있음"
-                      ? "있음"
-                      : "없음"}
-                  </p>
+                  <p className="info-value">{selectedEarthquake.effect === "있음" ? "있음" : "없음"}</p>
                 </div>
               )}
-                
             </div>
           </div>
         </div>
       )}
-
-      
     </div>
   )
 }
