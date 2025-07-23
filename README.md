@@ -1,4 +1,6 @@
 # 🌏 earthquake-japan-data
+[배포한 웹사이트 바로가기](https://earthquake-japan-data.onrender.com/)
+
 ### 📌 프로젝트 개요 | Project Overview
 2025년 7월 일본 대지진에 대한 만화 예언(루머)이 확산되며, 실제 난카이 해구 대지진 발생 가능성에 대한 불안감이 커지고 있습니다.
 최대 사망자 30만 명까지 추정되는 이 대지진은, 일본 정부와 학계에서도 지속적으로 모니터링하고 있는 중대한 위험 요소입니다.
@@ -17,6 +19,7 @@ This project is not about prediction, but about using data to inform awareness a
 - USGS의 실시간 지진 데이터 수집 및 전처리
 - 2011년 동일본 대지진 발생 전후 지진 분석
 - 2024 ~ 2025년 난카이 지역 데이터와 비교하여 패턴 유사성 분석
+- render 로 배포
 
 분석 결과를 시각화 및 대중 접근성 높은 웹 애플리케이션으로 개발하여 공개
 데이터 분석을 통해 전조 현상을 탐지하고, 대비할 수 있기를 목표로 함.
