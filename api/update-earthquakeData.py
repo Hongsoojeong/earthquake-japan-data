@@ -6,17 +6,26 @@ import json
 import os
 from datetime import datetime
 
-# Flask 앱 설정
-app = Flask(__name__, static_folder='../build', static_url_path='')
+# 환경에 따른 설정
+is_production = os.environ.get('RENDER') or os.environ.get('RAILWAY') or os.environ.get('HEROKU')
+
+if is_production:
+    # 🚀 배포 환경: React 빌드 파일 서빙
+    app = Flask(__name__, static_folder='../build', static_url_path='')
+else:
+    # 💻 로컬 환경: API만 제공
+    app = Flask(__name__)
+
 CORS(app)
 
-# 🧪 테스트용 라우트 먼저 추가
+# 🧪 테스트용 라우트
 @app.route('/api/test', methods=['GET'])
 def test_api():
     return jsonify({
         "status": "success",
         "message": "🎉 Flask API가 정상 작동합니다!",
-        "timestamp": datetime.now().isoformat()
+        "timestamp": datetime.now().isoformat(),
+        "environment": "production" if is_production else "development"
     })
 
 @app.route('/api/status', methods=['GET'])
@@ -72,13 +81,13 @@ def refresh_nankai_data():
                         
                         quake = {
                             "id": f"nankai_{len(quakesData) + 1}",
-                                "lat": latitude,
-                                "lng": longitude,
-                                "mag": mag,
-                                "dep": depth,
-                                "place": location,
-                                "effect": effect,
-                                "time": time,
+                                    "lat": latitude,
+                                    "lng": longitude,
+                                    "mag": mag,
+                                    "dep": depth,
+                                    "place": location,
+                                    "effect": effect,
+                                    "time": time,
                         }
                         quakesData.append(quake)
                         
@@ -107,40 +116,54 @@ def refresh_nankai_data():
             "timestamp": datetime.now().isoformat()
         }), 500
 
-# 🌐 React 앱 서빙
-@app.route('/')
-def serve_react_app():
-    try:
-        return send_from_directory(app.static_folder, 'index.html')
-    except:
-        return jsonify({"message": "React 앱을 찾을 수 없습니다. 빌드가 필요합니다."})
-
-@app.route('/<path:path>')
-def serve_static_files(path):
-    try:
-        if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
-            return send_from_directory(app.static_folder, path)
-        else:
+# 🌐 React 앱 서빙 (배포 환경에서만)
+if is_production:
+    @app.route('/')
+    def serve_react_app():
+        try:
             return send_from_directory(app.static_folder, 'index.html')
-    except:
-        return jsonify({"message": f"파일을 찾을 수 없습니다: {path}"})
+        except Exception as e:
+            return jsonify({
+                "message": "React 앱을 찾을 수 없습니다.", 
+                "error": str(e),
+                "build_folder": app.static_folder
+            })
+
+    @app.route('/<path:path>')
+    def serve_static_files(path):
+        try:
+            if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
+                return send_from_directory(app.static_folder, path)
+            else:
+                return send_from_directory(app.static_folder, 'index.html')
+        except Exception as e:
+            return jsonify({
+                "message": f"파일을 찾을 수 없습니다: {path}",
+                "error": str(e)
+            })
+else:
+    @app.route('/')
+    def local_home():
+        return jsonify({
+            "message": "🔧 로컬 개발 환경 - API만 제공",
+            "endpoints": [
+                "/api/test",
+                "/api/status", 
+                "/api/refresh-nankai"
+            ]
+        })
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 10000))
-    
-    # 배포 환경 감지
-    is_production = os.environ.get('RENDER') or os.environ.get('PORT')
-    
     if is_production:
-        print(f"🚀 Flask 서버 시작: 포트 {port} (배포 환경)")
-        print("🔗 API 엔드포인트:")
-        print("   - /api/test")
-        print("   - /api/status") 
-        print("   - /api/refresh-nankai")
+        # 배포 환경
+        port = int(os.environ.get('PORT', 10000))
+        print(f"🚀 배포 환경 Flask 서버 시작: 포트 {port}")
     else:
-        print(f"🚀 Flask 서버 시작: 포트 {port}")
+        # 로컬 환경 - 다른 포트 사용
+        port = 5050  # 포트 충돌 방지
+        print(f"💻 로컬 개발 Flask 서버 시작: 포트 {port}")
         print(f"🔗 API 테스트: http://localhost:{port}/api/test")
         print(f"🔗 상태 확인: http://localhost:{port}/api/status")
         print(f"🔗 데이터 새로고침: http://localhost:{port}/api/refresh-nankai")
     
-    app.run(host='0.0.0.0', port=port, debug=False)
+    app.run(host='0.0.0.0', port=port, debug=not is_production)
