@@ -1,70 +1,29 @@
-# Getting Started with Create React App
+# 🌏 earthquake-japan-data
+### 📌 프로젝트 개요 | Project Overview
+2025년 7월 일본 대지진에 대한 만화 예언(루머)이 확산되며, 실제 난카이 해구 대지진 발생 가능성에 대한 불안감이 커지고 있습니다.
+최대 사망자 30만 명까지 추정되는 이 대지진은, 일본 정부와 학계에서도 지속적으로 모니터링하고 있는 중대한 위험 요소입니다.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+본 프로젝트는 2011년 동일본 대지진 발생 전 나타났던 지진 전조 현상과
+최근 일본 남부 지역에서의 지진 및 지각 활동 패턴을 비교 분석하여, 데이터 기반 경각심을 높이고 사전 대비의 중요성을 환기하기 위해 기획되었습니다.
 
-## Available Scripts
 
-In the project directory, you can run:
+As public concern grows over a rumored megaquake in July 2025, 
+this project investigates whether current seismic activities around the Nankai Trough resemble the precursory patterns observed before the 2011 Great East Japan Earthquake.
+Experts warn that in a worst-case scenario, such an earthquake could lead to up to 300,000 deaths.
+This project is not about prediction, but about using data to inform awareness and encourage preparedness.
 
-### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### 🎯 프로젝트 목표 | Project Goals
+- USGS의 실시간 지진 데이터 수집 및 전처리
+- 2011년 동일본 대지진 발생 전후 지진 분석
+- 2024 ~ 2025년 난카이 지역 데이터와 비교하여 패턴 유사성 분석
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+분석 결과를 시각화 및 대중 접근성 높은 웹 애플리케이션으로 개발하여 공개
+데이터 분석을 통해 전조 현상을 탐지하고, 대비할 수 있기를 목표로 함.
 
-### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### 🔧 사용 기술 스택 | Tech Stack
+- Frontend: React, JavaScript
+- Data Analysis: Python
+- Data Source: USGS Earthquake API, 기상청 API 허브
