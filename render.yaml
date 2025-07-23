@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: earthquake-analysis
+    env: python
+    region: singapore
+    plan: free
+    buildCommand: |
+      echo "🔧 Python 및 Node.js 설치 시작..."
+      python -m pip install --upgrade pip
+      pip install -r requirements.txt
+      echo "📦 Node.js 의존성 설치..."
+      npm install
+      echo "🏗️ React 앱 빌드..."
+      npm run build
+      echo "✅ 빌드 완료!"
+    startCommand: "python api/update-earthquakeData.py"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: NODE_VERSION  
+        value: 18
+      - key: FLASK_ENV
+        value: production
+      - key: PORT
+        value: 10000
