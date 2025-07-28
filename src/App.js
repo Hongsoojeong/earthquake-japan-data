@@ -12,7 +12,7 @@ const API_BASE_URL =
     ? window.location.origin // 같은 서버에서 API와 React 모두 서빙
     : "http://localhost:5050" // 로컬 개발 시 기존 포트 유지
 
-var currentLen = 0;
+var currentLen = currentNankaiData.length;
 
 function App() {
   const [selectedEarthquake, setSelectedEarthquake] = useState(null)
