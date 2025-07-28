@@ -12,6 +12,8 @@ const API_BASE_URL =
     ? window.location.origin // 같은 서버에서 API와 React 모두 서빙
     : "http://localhost:5050" // 로컬 개발 시 기존 포트 유지
 
+var currentLen = 0;
+
 function App() {
   const [selectedEarthquake, setSelectedEarthquake] = useState(null)
   const [currentTohokuData, setCurrentTohokuData] = useState(tohokuData)
@@ -66,6 +68,7 @@ function App() {
         }))
 
         setUpdateStatus(`✅ ${result.message}`)
+        currentLen = result.data.length;
         console.log("✅ 데이터 업데이트 성공:", result.data.length + "건")
 
         // 3초 후 상태 메시지 제거
@@ -165,7 +168,7 @@ function App() {
           <div className="map-section nankai-section">
             <div className="section-header nankai-header">
               <h2 className="section-title">난카이 대지진 관련 (2024년~2025년)</h2>
-              <p className="section-subtitle">총 {currentNankaiData.length}건의 지진 데이터</p>
+              <p className="section-subtitle">총 {currentLen}건의 지진 데이터</p>
             </div>
             <div className="section-content">
               <EarthquakeMap
