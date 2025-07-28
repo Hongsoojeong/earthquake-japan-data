@@ -12,7 +12,6 @@ const API_BASE_URL =
     ? window.location.origin // 같은 서버에서 API와 React 모두 서빙
     : "http://localhost:5050" // 로컬 개발 시 기존 포트 유지
 
-var currentLen = currentNankaiData.length;
 
 function App() {
   const [selectedEarthquake, setSelectedEarthquake] = useState(null)
@@ -25,6 +24,8 @@ function App() {
     nankai: "2024-05-01 ~ 현재",
     tohoku: "2011-02-11 ~ 2011-03-12",
   })
+
+  var currentLen = currentNankaiData.length;
 
   // ✅ 앱 시작 시 localStorage에 저장된 값으로 초기화
   useEffect(() => {
